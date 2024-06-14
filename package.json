@@ -2,12 +2,14 @@
   "name": "fbi_solucion_guiada",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "node --watch index.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Williams Hernandez",
+  "license": "MIT",
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
