@@ -1,10 +1,20 @@
 <div class="col-md-4 mx-auto">
     <h2 class="text-center">Inicia sesión</h2>
     <form action="/login" method="POST">
-    
+    <div>
+        {{#if errors}}
+        <div>
+            {{#each errors}}
+            <div class="alert alert-danger" role="alert">
+                {{this.msg}}
+            </div>
+            {{/each}}
+        </div>
+       {{/if}}
+    </div>
     <div class="mb-3">
         <label class="form-label" for="email">Email</label>
-        <input class="form-control" type="text" name="email" id="email" placeholder="Ej. WcWp2@example.com" >
+        <input class="form-control" type="text" name="email" id="email" placeholder="Ej. WcWp2@example.com" value="{{old.email}}" >
     </div>
     <div class="mb-3">
         <label class="form-label" for="password">Password</label>

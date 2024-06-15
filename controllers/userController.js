@@ -1,6 +1,7 @@
 import { addUserQuery, verifyUserQuery } from "../models/userQueries.js";
 import { check, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 process.loadEnvFile();
 
@@ -86,9 +87,10 @@ export const addUser = async (req, res) => {
     }
 
     //Hashear el password
+    const passwordHash = await bcrypt.hash(password, 10);
 
     //Guardar en la BBDD
-    await addUserQuery(name, email, password);
+    await addUserQuery(name, email, passwordHash);
     res.status(201).redirect("/login");
   } catch (error) {
     res.status(500).send(error.message);
@@ -107,7 +109,21 @@ export const login = async (req, res) => {
 
     const userVerify = await verifyUserQuery(email);
     if (!userVerify) {
-      return res.status(404).send("User not found");
+      return res.render("login", {
+        title: "Login Page",
+        errors: [{ msg: "Los datos son incorrectos" }],
+        old: req.body,
+      })
+    }
+
+    //Verificamos que el password coincida
+    const passwordMatch = await bcrypt.compare(password, userVerify.password);
+    if (!passwordMatch) {
+      return res.render("login", {
+        title: "Login Page",
+        errors: [{ msg: "Los datos son incorrectos" }],
+        old: req.body,
+      })
     }
 
     //Deberiamos ir a la pagina correspondiente de admin
