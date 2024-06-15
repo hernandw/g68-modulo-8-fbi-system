@@ -2,15 +2,23 @@
     <h2 class="text-center">Crea tu cuenta</h2>
     <form action="/register" method="POST">
     <div>
-       
+        {{#if errors}}
+        <div>
+            {{#each errors}}
+            <div class="alert alert-danger" role="alert">
+                {{this.msg}}
+            </div>
+            {{/each}}
+        </div>
+       {{/if}}
     </div>
     <div class="mb-3">
         <label class="form-label" for="name">Name</label>
-        <input class="form-control" type="text" name="name" id="name" placeholder="Ej. John Doe""">
+        <input class="form-control" type="text" name="name" id="name" placeholder="Ej. John Doe" value="{{old.name}}">
     </div>
     <div class="mb-3">
         <label class="form-label" for="email">Email</label>
-        <input class="form-control" type="text" name="email" id="email" placeholder="Ej. WcWp2@example.com">
+        <input class="form-control" type="text" name="email" id="email" placeholder="Ej. WcWp2@example.com" value="{{old.email}}">
     </div>
     <div class="mb-3">
         <label class="form-label" for="password">Password</label>

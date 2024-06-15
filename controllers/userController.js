@@ -1,4 +1,5 @@
 import { addUserQuery, verifyUserQuery } from "../models/userQueries.js";
+import { check, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 
 process.loadEnvFile();
@@ -58,17 +59,30 @@ export const addUser = async (req, res) => {
     const { name, email, password, confirm_password } = req.body;
 
     //validamos que el password coincida
-    if (password !== confirm_password) {
-      res.status(400).send("Las contraseñas no coinciden");
-      return;
-    }
-    if (!name || !email || !password) {
-      return res.status(400).send("All fields are required");
-    }
+    await check("name").notEmpty().withMessage("Nombre es requerido").run(req);
+    await check("email").isEmail().withMessage("Email es requerido").run(req);
+    await check("password").isLength({ min: 6}).withMessage("La contraseña debe ser minimo 6 caracteres").run(req);
+    await check("confirm_password").equals(password).withMessage("Las contraseñas no coinciden").run(req);
+
+
+
+    const errors = validationResult(req);
+//Si hay errores devolver
+ if (!errors.isEmpty()) {
+  return res.render("register", {
+    title: "Register Page",
+    errors: errors.array(),
+    old: req.body
+  })
+}
+
     //Verificacion de que el correo no este registrado
     const userVerify = await verifyUserQuery(email);
     if (userVerify) {
-      return res.status(400).send("El correo ya se encuentra registrado");
+      res.render("register", {
+        title: "Register Page",
+        errors: [{ msg: "El correo ya se encuentra registrado" }],
+      })
     }
 
     //Hashear el password
