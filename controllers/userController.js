@@ -2,6 +2,7 @@ import { addUserQuery, verifyUserQuery } from "../models/userQueries.js";
 import { check, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { sendEmail } from "../helpers/sendEmail.js";
 
 process.loadEnvFile();
 
@@ -108,6 +109,7 @@ export const login = async (req, res) => {
     //Verificamos que el usuario se encuentre en la BBDD
 
     const userVerify = await verifyUserQuery(email);
+    console.log(userVerify);
     if (!userVerify) {
       return res.render("login", {
         title: "Login Page",
@@ -140,5 +142,37 @@ export const login = async (req, res) => {
       .redirect("/admin");
   } catch (error) {
     res.status(500).send(error.message);
-  }
+  } 
 };
+
+export const contact = async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+
+    //validamos de los campos
+    await check("name").notEmpty().withMessage("Nombre es requerido").run(req);
+    await check("email").isEmail().withMessage("Email es requerido").run(req);
+    await check("subject").notEmpty().withMessage("Asunto es requerido").run(req);
+    await check("message").notEmpty().withMessage("Mensaje es requerido").run(req);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render("contact", {
+        title: "Contact Page",
+        errors: errors.array(),
+        old: req.body
+      })
+    }
+      
+    const result =await sendEmail(name, email, subject, message);
+    if(result){
+      return res.render("contact", {
+        title: "Contact Page",
+        success: "Email enviado correctamente"
+      })
+    }
+      
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+
+}
