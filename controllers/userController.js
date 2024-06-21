@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sendEmail } from "../helpers/sendEmail.js";
 
-process.loadEnvFile();
+import 'dotenv/config';
 
 const secretKey = process.env.JWT_SECRET_KEY;
 
