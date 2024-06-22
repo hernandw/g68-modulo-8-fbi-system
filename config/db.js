@@ -10,7 +10,8 @@ const config = {
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB_DATABASE,
-    allowExitOnIdle: true
+    allowExitOnIdle: true,
+    ssl: false
 }
 
 
